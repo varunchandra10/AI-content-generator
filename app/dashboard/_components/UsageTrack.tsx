@@ -10,7 +10,7 @@ import { HISTORY } from "../history/page";
 
 const UsageTracker = () => {
   const { user } = useUser();
-  const {totalUsage, setTotalUsage} = useContext(TotalUsageContext);
+  const { totalUsage, setTotalUsage } = useContext(TotalUsageContext);
 
   useEffect(() => {
     if (user?.primaryEmailAddress?.emailAddress) {
@@ -19,15 +19,21 @@ const UsageTracker = () => {
   }, [user]);
 
   const GetData = async () => {
+    const email = user?.primaryEmailAddress?.emailAddress;
+    if (!email) {
+      console.error("User email is undefined.");
+      setTotalUsage(0);
+      return;
+    }
+
     try {
       const result: HISTORY[] = await db
         .select()
         .from(AIOutput)
-        .where(eq(AIOutput.createdBy, user?.primaryEmailAddress?.emailAddress));
+        .where(eq(AIOutput.createdBy, email)); // Pass a string only when email is valid
       if (result.length > 0) {
         GetTotalUsage(result);
       } else {
-        // console.log("No data found for the user.");
         setTotalUsage(0); // Set usage to 0 if no data is found
       }
     } catch (error) {
@@ -41,7 +47,6 @@ const UsageTracker = () => {
       total += Number(element.aiResponse?.length || 0);
     });
     setTotalUsage(total);
-    // console.log("Total Usage:", total);
   };
 
   return (
@@ -52,7 +57,7 @@ const UsageTracker = () => {
           <div
             className="h-2 bg-white rounded-full"
             style={{
-              width:`${(totalUsage / 10000) * 100}%`,
+              width: `${(totalUsage / 10000) * 100}%`,
             }}
           ></div>
         </div>
