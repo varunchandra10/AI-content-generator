@@ -30,11 +30,11 @@ const UsageTracker = () => {
       const result: HISTORY[] = await db
         .select()
         .from(AIOutput)
-        .where(eq(AIOutput.createdBy, email)); // Pass a string only when email is valid
+        .where(eq(AIOutput.createdBy, email || ""))
       if (result.length > 0) {
         GetTotalUsage(result);
       } else {
-        setTotalUsage(0); // Set usage to 0 if no data is found
+        setTotalUsage(0);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
