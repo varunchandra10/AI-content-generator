@@ -14,7 +14,7 @@ const OutputSection = ({ aiOutput }: props) => {
 
   useEffect(() => {
     const editorInstance = editorRef.current.getInstance();
-    editorInstance.setMarkdown(aiOutput);
+    editorInstance.setMarkdown(aiOutput); // aiOutput should now be plain text
   }, [aiOutput]);
 
   const handleCopy = () => {

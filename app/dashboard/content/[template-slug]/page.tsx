@@ -21,22 +21,16 @@ import { TotalUsageContext } from '@/app/(context)/TotalUsageContext'
 const CreateNewContent = () => {
     const params = useParams();
     const templateSlug = params['template-slug'];
-    // console.log(props.params['template-slug'])
     const selectedTemplate: TEMPLATE | undefined = Templates?.find((item) => item.slug == templateSlug);
 
     const [loading, setLoading] = useState(false);
     const [aiOutput, setAiOutput] = useState<string>('');
-    const {totalUsage, setTotalUsage} = useContext(TotalUsageContext)
+    const { totalUsage, setTotalUsage } = useContext(TotalUsageContext);
 
     const { user } = useUser();
     const router = useRouter();
 
     const GenerateAIContent = async (formData: any) => {
-        // if(totalUsage >= 10000){
-        //     console.log("Please Upgrade your plan to continue using the app");
-        //     router.push('/dashboard/billing');
-        //     return;
-        // }
         setLoading(true);
         const SelectedPrompt = selectedTemplate?.aiPrompt;
         const FinalAiPrompt = JSON.stringify(formData) + ", " + SelectedPrompt;
@@ -54,19 +48,25 @@ const CreateNewContent = () => {
             aiResponse: aiResp,
             createdBy: user?.primaryEmailAddress?.emailAddress || '',
             createdAt: moment().format('DD/MM/YYYY'),
-        })
+        });
     }
 
     return (
-        <div className='p-10'>
+        <div className='p-4 md:p-10'>
             <Link href={"/dashboard"}>
                 <Button><ArrowLeft /> Back</Button>
             </Link>
-            <div className='grid gird-cols-1 md:grid-cols-3 gap-5 py-5'>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-5 py-5'>
                 {/* form section */}
-                <FormSection selectedTemplate={selectedTemplate} userFormInput={(v: any) => GenerateAIContent(v)} loading={loading} />
+                <div className="col-span-1">
+                    <FormSection 
+                        selectedTemplate={selectedTemplate} 
+                        userFormInput={(v: any) => GenerateAIContent(v)} 
+                        loading={loading} 
+                    />
+                </div>
                 {/* output section */}
-                <div className='col-span-2'>
+                <div className='col-span-2 overflow-auto'>
                     <OutputSection aiOutput={aiOutput} />
                 </div>
             </div>
